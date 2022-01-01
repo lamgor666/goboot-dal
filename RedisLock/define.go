@@ -7,7 +7,7 @@ import (
 	"github.com/lamgor666/goboot-common/util/castx"
 	"github.com/lamgor666/goboot-common/util/fsx"
 	"github.com/lamgor666/goboot-common/util/stringx"
-	"github.com/lamgor666/goboot-dal/poolx"
+	"github.com/lamgor666/goboot-dal/RedisPool"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -92,7 +92,7 @@ func (l *Lock) TryLock(waitTimeout, ttl time.Duration) bool {
 		ttl = 30 * time.Second
 	}
 
-	conn, err := poolx.GetRedisConnection()
+	conn, err := RedisPool.GetConn()
 
 	if err != nil {
 		return false
@@ -136,7 +136,7 @@ func (l *Lock) TryLock(waitTimeout, ttl time.Duration) bool {
 }
 
 func (l *Lock) Release() {
-	conn, err := poolx.GetRedisConnection()
+	conn, err := RedisPool.GetConn()
 
 	if err != nil {
 		return

@@ -9,7 +9,7 @@ import (
 	"github.com/lamgor666/goboot-common/util/fsx"
 	"github.com/lamgor666/goboot-common/util/numberx"
 	"github.com/lamgor666/goboot-common/util/securityx"
-	"github.com/lamgor666/goboot-dal/poolx"
+	"github.com/lamgor666/goboot-dal/RedisPool"
 	"io/ioutil"
 	"math/big"
 	"os"
@@ -100,7 +100,7 @@ func (o *options) WithCacheDir(dir string) *options {
 }
 
 func (l *Limiter) GetLimit() map[string]interface{} {
-	conn, err := poolx.GetRedisConnection()
+	conn, err := RedisPool.GetConn()
 
 	if err != nil {
 		return map[string]interface{}{}

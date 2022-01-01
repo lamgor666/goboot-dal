@@ -604,7 +604,7 @@ func (qb *queryBuilder) getForModels(tx *sql.Tx, model interface{}, eachFn func(
 		qb.timeout = 0
 	}()
 
-	err1 := NewDbException("model is not struct pointer")
+	err1 := NewException("model is not struct pointer")
 
 	if model == nil {
 		return err1
@@ -623,7 +623,7 @@ func (qb *queryBuilder) getForModels(tx *sql.Tx, model interface{}, eachFn func(
 	var err error
 
 	if pool == nil {
-		err = NewDbException("database connection pool is nil")
+		err = NewException("database connection pool is nil")
 		writeLog("error", err)
 		return err
 	}
@@ -701,7 +701,7 @@ func (qb *queryBuilder) firstForModel(tx *sql.Tx, model interface{}) error {
 	var err error
 
 	if pool == nil {
-		err = NewDbException("database connection pool is nil")
+		err = NewException("database connection pool is nil")
 		writeLog("error", err)
 		return err
 	}
@@ -817,7 +817,7 @@ func (qb *queryBuilder) count(tx *sql.Tx, countField string) (int, error) {
 	var err error
 
 	if pool == nil {
-		err = NewDbException("database connection pool is nil")
+		err = NewException("database connection pool is nil")
 		writeLog("error", err)
 		return 0, err
 	}
@@ -868,7 +868,7 @@ func (qb *queryBuilder) sumForInt(tx *sql.Tx, fieldName string) (int, error) {
 	var err error
 
 	if pool == nil {
-		err = NewDbException("database connection pool is nil")
+		err = NewException("database connection pool is nil")
 		writeLog("error", err)
 		return 0, err
 	}
@@ -919,7 +919,7 @@ func (qb *queryBuilder) sumForFloat(tx *sql.Tx, fieldName string) (float64, erro
 	var err error
 
 	if pool == nil {
-		err = NewDbException("database connection pool is nil")
+		err = NewException("database connection pool is nil")
 		writeLog("error", err)
 		return 0, err
 	}
@@ -979,7 +979,7 @@ func (qb *queryBuilder) insertByModel(tx *sql.Tx, model interface{}) (int64, err
 		qb.timeout = 0
 	}()
 
-	err1 := NewDbException("param [model] must be a struct pointer")
+	err1 := NewException("param [model] must be a struct pointer")
 
 	if model == nil {
 		return 0, err1
@@ -1029,7 +1029,7 @@ func (qb *queryBuilder) updateByModel(tx *sql.Tx, model interface{}) (int64, err
 		qb.timeout = 0
 	}()
 
-	err1 := NewDbException("param [model] must be a struct pointer")
+	err1 := NewException("param [model] must be a struct pointer")
 
 	if model == nil {
 		return 0, err1

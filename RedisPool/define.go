@@ -1,4 +1,4 @@
-package poolx
+package RedisPool
 
 import (
 	"context"

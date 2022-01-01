@@ -227,18 +227,18 @@ func scanIntoMap(rs *sql.Rows) (map[string]interface{}, error) {
 	scanFields, scanArgs := buildScanFields(rs)
 
 	if len(scanFields) < 1 || len(scanArgs) < 1 || len(scanFields) != len(scanArgs) || len(scanFields) != len(columnNames) {
-		return map[string]interface{}{}, NewDbException("scan error")
+		return map[string]interface{}{}, NewException("scan error")
 	}
 
 	for _, scanField := range scanFields {
 		if scanField == nil {
-			return map[string]interface{}{}, NewDbException("scan error")
+			return map[string]interface{}{}, NewException("scan error")
 		}
 	}
 
 	for _, scanArg := range scanArgs {
 		if scanArg == nil {
-			return map[string]interface{}{}, NewDbException("scan error")
+			return map[string]interface{}{}, NewException("scan error")
 		}
 	}
 
@@ -349,7 +349,7 @@ func scanIntoMap(rs *sql.Rows) (map[string]interface{}, error) {
 }
 
 func scanIntoModel(rs *sql.Rows, model interface{}) error {
-	err1 := NewDbException("model is not struct pointer")
+	err1 := NewException("model is not struct pointer")
 
 	if model == nil {
 		return err1
@@ -370,18 +370,18 @@ func scanIntoModel(rs *sql.Rows, model interface{}) error {
 	scanFields, scanArgs := buildScanFields(rs)
 
 	if len(scanFields) < 1 || len(scanArgs) < 1 || len(scanFields) != len(scanArgs) || len(scanFields) != len(columnNames) {
-		return NewDbException("scan error")
+		return NewException("scan error")
 	}
 
 	for _, scanField := range scanFields {
 		if scanField == nil {
-			return NewDbException("scan error")
+			return NewException("scan error")
 		}
 	}
 
 	for _, scanArg := range scanArgs {
 		if scanArg == nil {
-			return NewDbException("scan error")
+			return NewException("scan error")
 		}
 	}
 

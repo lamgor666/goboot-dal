@@ -85,7 +85,7 @@ func TxExecuteSql(tx *sql.Tx, query string, args ...interface{}) error {
 
 func Transations(fn func(tx *sql.Tx) error, opts ...*sql.TxOptions) error {
 	if pool == nil {
-		err := NewDbException("database connection pool is nil")
+		err := NewException("database connection pool is nil")
 		writeLog("error", err)
 		return err
 	}
@@ -247,7 +247,7 @@ func doSelectBySql(tx *sql.Tx, query string, args ...interface{}) ([]map[string]
 	emptyList := make([]map[string]interface{}, 0)
 
 	if pool == nil {
-		err := NewDbException("database connection pool is nil")
+		err := NewException("database connection pool is nil")
 		writeLog("error", err)
 		return emptyList, err
 	}
@@ -287,7 +287,7 @@ func doSelectBySql(tx *sql.Tx, query string, args ...interface{}) ([]map[string]
 
 func doInsertBySql(tx *sql.Tx, query string, args ...interface{}) (int64, error) {
 	if pool == nil {
-		err := NewDbException("database connection pool is nil")
+		err := NewException("database connection pool is nil")
 		writeLog("error", err)
 		return 0, err
 	}
@@ -327,7 +327,7 @@ func doInsertBySql(tx *sql.Tx, query string, args ...interface{}) (int64, error)
 
 func doUpdateBySql(tx *sql.Tx, query string, args ...interface{}) (int64, error) {
 	if pool == nil {
-		err := NewDbException("database connection pool is nil")
+		err := NewException("database connection pool is nil")
 		writeLog("error", err)
 		return 0, err
 	}
@@ -368,7 +368,7 @@ func doUpdateBySql(tx *sql.Tx, query string, args ...interface{}) (int64, error)
 
 func doExecuteSql(tx *sql.Tx, query string, args ...interface{}) error {
 	if pool == nil {
-		err := NewDbException("database connection pool is nil")
+		err := NewException("database connection pool is nil")
 		writeLog("error", err)
 		return err
 	}
