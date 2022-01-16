@@ -3,7 +3,6 @@ package RedisLock
 import (
 	"fmt"
 	"github.com/gomodule/redigo/redis"
-	"github.com/lamgor666/goboot-common/AppConf"
 	"github.com/lamgor666/goboot-common/util/castx"
 	"github.com/lamgor666/goboot-common/util/fsx"
 	"github.com/lamgor666/goboot-common/util/stringx"
@@ -16,8 +15,9 @@ import (
 )
 
 type options struct {
-	luaFile string
-	cacheDir string
+	luaFileLock   string
+	luaFileUnlock string
+	cacheDir      string
 }
 
 type Lock struct {
@@ -26,27 +26,8 @@ type Lock struct {
 	opts     *options
 }
 
-func NewOptions(args ...string) *options {
-	var luaFile string
-	var cacheDir string
-
-	if len(args) > 0 {
-		luaFile = args[0]
-	}
-
-	if len(args) > 1 {
-		cacheDir = args[1]
-	}
-
-	opts := &options{luaFile: luaFile}
-
-	if cacheDir != "" {
-		if stat, err := os.Stat(cacheDir); err == nil && stat.IsDir() {
-			opts.cacheDir = cacheDir
-		}
-	}
-
-	return opts
+func NewOptions() *options {
+	return &options{}
 }
 
 func New(key string, opts ...*options) *Lock {
@@ -67,9 +48,14 @@ func New(key string, opts ...*options) *Lock {
 	}
 }
 
-func (o *options) WithLuaFile(fpath string) *options {
+func (o *options) WithLuaFile(typ, fpath string) *options {
 	if stat, err := os.Stat(fpath); err == nil && !stat.IsDir() {
-		o.luaFile = fpath
+		switch typ {
+		case "lock":
+			o.luaFileLock = fpath
+		case "unlock":
+			o.luaFileUnlock = fpath
+		}
 	}
 
 	return o
@@ -154,12 +140,17 @@ func (l *Lock) Release() {
 }
 
 func (l *Lock) ensureLuaShaExists(conn redis.Conn, actionType string) string {
-	datadir := AppConf.GetDataDir()
 	var cacheFile string
 	cacheDir := l.opts.cacheDir
 
 	if cacheDir == "" {
-		cacheDir = fsx.GetRealpath(datadir, "cache")
+		cacheDir = fsx.GetRealpath("datadir:cache")
+	}
+
+	if cacheDir != "" {
+		if stat, err := os.Stat(cacheDir); err != nil || !stat.IsDir() {
+			cacheDir = ""
+		}
 	}
 
 	if cacheDir != "" {
@@ -174,17 +165,29 @@ func (l *Lock) ensureLuaShaExists(conn redis.Conn, actionType string) string {
 		}
 	}
 
-	luaFile := l.opts.luaFile
+	var luaFile string
+
+	switch actionType {
+	case "lock":
+		luaFile = l.opts.luaFileLock
+	case "unlock":
+		luaFile = l.opts.luaFileUnlock
+	}
 
 	if luaFile == "" {
-		luaFile = fsx.GetRealpath(datadir, fmt.Sprintf("redislua/redislock.%s.lua", actionType))
+		switch actionType {
+		case "lock":
+			luaFile = fsx.GetRealpath("datadir:redislock.lock.lua")
+		case "unlock":
+			luaFile = fsx.GetRealpath("datadir:redislock.unlock.lua")
+		}
 	}
 
 	if luaFile == "" {
 		return ""
 	}
 
-	buf, _ := ioutil.ReadFile(l.opts.luaFile)
+	buf, _ := ioutil.ReadFile(luaFile)
 
 	if len(buf) < 1 {
 		return ""
